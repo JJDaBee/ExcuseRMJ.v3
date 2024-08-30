@@ -49,4 +49,16 @@ const loginUser = async (req, res) => {
     res.json({ token });
 };
 
-module.exports = { registerUser, loginUser };
+// Function to get all users
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({
+            message: 'Server error, could not retrieve users',
+        });
+    }
+};
+
+module.exports = { registerUser, loginUser, getAllUsers };
