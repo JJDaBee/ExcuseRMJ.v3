@@ -6,22 +6,31 @@ const User = require('../models/userModel');
 // Register a new user
 const registerUser = async (req, res) => {
     const { username, password } = req.body;
+    console.log(`Attempting to register user: ${username}`);
 
-    // Check if the user already exists
-    const userExists = await User.findOne({ username });
-    if (userExists) {
-        return res.status(400).json({ message: 'User already exists' });
+    try {
+        // Check if the user already exists
+        const userExists = await User.findOne({ username });
+        console.log('User exists:', userExists);
+
+        if (userExists) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Save the new user
+        const newUser = new User({ username, password: hashedPassword });
+        await newUser.save();
+
+        console.log('User registered successfully:', newUser);
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+        console.error('Error during registration:', error);
+        res.status(500).json({ message: 'Server error, registration failed' });
     }
-
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create and save the new user
-    const newUser = new User({ username, password: hashedPassword });
-    await newUser.save();
-
-    res.status(201).json({ message: 'User registered successfully' });
 };
 
 // Authenticate user and get token
