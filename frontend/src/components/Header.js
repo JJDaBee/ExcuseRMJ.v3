@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -7,11 +7,18 @@ import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-import logo from '../images/logo.png';
+import logo from '../images/logo.png'; // Adjust the path if necessary
 
 function Header() {
+    const location = useLocation();
+    const [activeButton, setActiveButton] = useState(location.pathname);
+
+    const handleButtonClick = (path) => {
+        setActiveButton(path);
+    };
+
     return (
         <AppBar
             position="static"
@@ -23,7 +30,6 @@ function Header() {
             }}
         >
             <Toolbar>
-                {/* Logo and Title */}
                 <Box
                     sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}
                 >
@@ -41,13 +47,22 @@ function Header() {
                     </Typography>
                 </Box>
 
-                {/* Navigation Links */}
                 <Box sx={{ display: 'flex', gap: 3, marginRight: 2 }}>
                     <Button
                         color="inherit"
                         component={Link}
                         to="/about-us"
-                        sx={{ color: '#000' }}
+                        sx={{
+                            color:
+                                activeButton === '/about-us'
+                                    ? '#7cb342'
+                                    : '#000',
+                            fontWeight:
+                                activeButton === '/about-us'
+                                    ? 'bold'
+                                    : 'normal',
+                        }}
+                        onClick={() => handleButtonClick('/about-us')}
                     >
                         About Us
                     </Button>
@@ -55,7 +70,17 @@ function Header() {
                         color="inherit"
                         component={Link}
                         to="/services"
-                        sx={{ color: '#000' }}
+                        sx={{
+                            color:
+                                activeButton === '/services'
+                                    ? '#7cb342'
+                                    : '#000',
+                            fontWeight:
+                                activeButton === '/services'
+                                    ? 'bold'
+                                    : 'normal',
+                        }}
+                        onClick={() => handleButtonClick('/services')}
                     >
                         Services
                     </Button>
@@ -63,18 +88,26 @@ function Header() {
                         color="inherit"
                         component={Link}
                         to="/contact-us"
-                        sx={{ color: '#000' }}
+                        sx={{
+                            color:
+                                activeButton === '/contact-us'
+                                    ? '#7cb342'
+                                    : '#000',
+                            fontWeight:
+                                activeButton === '/contact-us'
+                                    ? 'bold'
+                                    : 'normal',
+                        }}
+                        onClick={() => handleButtonClick('/contact-us')}
                     >
                         Contact Us
                     </Button>
                 </Box>
 
-                {/* Search Icon */}
                 <IconButton color="inherit" sx={{ marginRight: 2 }}>
                     <SearchIcon />
                 </IconButton>
 
-                {/* Login/Sign Up Button */}
                 <Button
                     variant="contained"
                     color="success"
