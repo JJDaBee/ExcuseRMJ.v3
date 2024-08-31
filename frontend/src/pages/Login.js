@@ -1,59 +1,90 @@
-// src/components/Login.js
-import React, { useState } from 'react';
+import React from 'react';
+import { Box, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import backgroundImage from '../images/logo3.png'; // Adjust the path if necessary
 
-function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await fetch(
-                'http://localhost:5000/api/auth/login',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username, password }),
-                }
-            );
-            const data = await response.json();
-            if (data.token) {
-                setMessage('Login successful!');
-                localStorage.setItem('token', data.token);
-            } else {
-                setMessage(data.message || 'Login failed!');
-            }
-        } catch (error) {
-            setMessage('Login failed!');
-        }
-    };
-
+function LoginPage() {
     return (
-        <div>
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Username"
-                    required
+        <Box
+            sx={{
+                padding: 4,
+                backgroundColor: '#fdf8e4',
+                textAlign: 'center',
+                minHeight: '100vh',
+            }}
+        >
+            <Typography
+                variant="h4"
+                sx={{ fontWeight: 'bold', color: '#4CAF50', marginBottom: 2 }}
+            >
+                WELCOME{' '}
+                <span role="img" aria-label="smile">
+                    😊
+                </span>
+            </Typography>
+
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: 4,
+                    marginTop: 2,
+                }}
+            >
+                <img
+                    src={backgroundImage}
+                    alt="Volunteer and Admin"
+                    style={{
+                        width: '80%',
+                        maxWidth: '30%',
+                    }}
                 />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    required
-                />
-                <button type="submit">Login</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
+            </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 4 }}>
+                <Button
+                    component={Link}
+                    to="/volunteer-login"
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#cde6c7',
+                        color: '#000',
+                        fontWeight: 'bold',
+                        padding: '15px 30px',
+                        borderRadius: '20px',
+                        fontSize: '18px',
+                        boxShadow: '2px 2px 10px rgba(0, 0, 0, 0.1)',
+                        '&:hover': {
+                            backgroundColor: '#b5d6a6',
+                        },
+                    }}
+                >
+                    VOLUNTEER
+                </Button>
+
+                <Button
+                    component={Link}
+                    to="/admin-login"
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#cde6c7',
+                        color: '#000',
+                        fontWeight: 'bold',
+                        padding: '15px 30px',
+                        borderRadius: '20px',
+                        fontSize: '18px',
+                        boxShadow: '2px 2px 10px rgba(0, 0, 0, 0.1)',
+                        '&:hover': {
+                            backgroundColor: '#b5d6a6',
+                        },
+                    }}
+                >
+                    ADMIN
+                </Button>
+            </Box>
+        </Box>
     );
 }
 
-export default Login;
+export default LoginPage;

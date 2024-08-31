@@ -74,8 +74,8 @@ function Services() {
             sx={{
                 padding: 4,
                 backgroundColor: '#e0f7e0',
-                borderRadius: 2,
-                maxWidth: 600,
+                borderRadius: 3,
+                maxWidth: 650,
                 margin: 'auto',
                 textAlign: 'center',
             }}
