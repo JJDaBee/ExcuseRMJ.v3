@@ -5,18 +5,21 @@ import {
     Button,
     ToggleButton,
     ToggleButtonGroup,
+    Card,
+    CardContent,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import TextField from '@mui/material/TextField';
-import axios from 'axios'; // Import axios for making API calls
+import axios from 'axios';
 
 function Services() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedArea, setSelectedArea] = useState('');
     const [selectedTime, setSelectedTime] = useState('');
     const [filteredSlots, setFilteredSlots] = useState([]);
+    const [selectedSlotIndex, setSelectedSlotIndex] = useState(null); // Track the selected card
 
     const handleAreaChange = (event, newArea) => {
         setSelectedArea(newArea);
@@ -28,21 +31,12 @@ function Services() {
 
     const handleSearch = async () => {
         try {
-            // Format date to a string that matches your backend's expected format (e.g., '2023-09-01')
             const year = selectedDate.getFullYear();
             const month = (selectedDate.getMonth() + 1)
                 .toString()
-                .padStart(2, '0'); // Months are 0-based, so add 1
+                .padStart(2, '0');
             const day = selectedDate.getDate().toString().padStart(2, '0');
             const formattedDate = `${year}-${month}-${day}`;
-
-            console.log('Formatted Date:', formattedDate); // Debugging
-
-            console.log('Making API call with:', {
-                date: formattedDate,
-                area: selectedArea,
-                time: selectedTime,
-            });
 
             const response = await axios.get(
                 'http://localhost:5000/api/volunteer/slots',
@@ -55,12 +49,24 @@ function Services() {
                 }
             );
 
-            console.log('API Response:', response.data);
-
             setFilteredSlots(response.data);
+            setSelectedSlotIndex(null); // Reset the selected slot
         } catch (error) {
             console.error('Error fetching volunteer slots:', error);
         }
+    };
+
+    const handleCardClick = (index) => {
+        setSelectedSlotIndex(index); // Set the clicked card as the selected one
+    };
+
+    const handleBackClick = () => {
+        setSelectedSlotIndex(null); // Deselect the card, showing all cards again
+    };
+
+    const handleConfirmClick = () => {
+        alert('Slot has been confirmed');
+        setSelectedSlotIndex(null); // Return to the filter screen after confirmation
     };
 
     return (
@@ -164,24 +170,70 @@ function Services() {
             </Button>
 
             {/* Display filtered slots */}
-            {filteredSlots.length > 0 ? (
-                <Box sx={{ marginTop: 4 }}>
-                    {filteredSlots.map((slot, index) => (
-                        <Box key={index} sx={{ marginBottom: 2 }}>
-                            <Typography variant="body1">
-                                {slot.date} - {slot.area} - {slot.time}
-                            </Typography>
-                            <Typography variant="body2">
-                                {slot.description}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Box>
-            ) : (
-                <Typography variant="body2" sx={{ marginTop: 4 }}>
-                    No slots available for the selected criteria.
-                </Typography>
-            )}
+            <Box sx={{ marginTop: 4 }}>
+                {filteredSlots.length > 0 ? (
+                    filteredSlots.map((slot, index) =>
+                        selectedSlotIndex === null ||
+                        selectedSlotIndex === index ? (
+                            <Card
+                                key={index}
+                                sx={{
+                                    marginBottom: 2,
+                                    borderRadius: 3,
+                                    transition:
+                                        'transform 0.3s ease, box-shadow 0.3s ease',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)',
+                                        boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
+                                    },
+                                }}
+                                onClick={() => handleCardClick(index)}
+                            >
+                                <CardContent>
+                                    <Typography variant="h6">
+                                        {slot.date} - {slot.area} - {slot.time}
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        color="textSecondary"
+                                    >
+                                        {slot.description}
+                                    </Typography>
+                                    {selectedSlotIndex === index && (
+                                        <Box sx={{ marginTop: 2 }}>
+                                            <Typography variant="body1">
+                                                More details about this slot...
+                                            </Typography>
+                                            <Button
+                                                variant="outlined"
+                                                sx={{ marginTop: 2 }}
+                                                onClick={handleBackClick}
+                                            >
+                                                Back
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                sx={{
+                                                    marginTop: 2,
+                                                    marginLeft: 2,
+                                                }}
+                                                onClick={handleConfirmClick}
+                                            >
+                                                Confirm
+                                            </Button>
+                                        </Box>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        ) : null
+                    )
+                ) : (
+                    <Typography variant="body2" sx={{ marginTop: 4 }}>
+                        No slots available for the selected criteria.
+                    </Typography>
+                )}
+            </Box>
         </Box>
     );
 }

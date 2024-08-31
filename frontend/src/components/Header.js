@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -15,9 +15,14 @@ function Header() {
     const location = useLocation();
     const [activeButton, setActiveButton] = useState(location.pathname);
 
-    const handleButtonClick = (path) => {
-        setActiveButton(path);
-    };
+    useEffect(() => {
+        // When location changes, set the active button only if not on the landing page
+        if (location.pathname !== '/') {
+            setActiveButton(location.pathname);
+        } else {
+            setActiveButton(null); // Reset active button on the landing page
+        }
+    }, [location.pathname]);
 
     return (
         <AppBar
@@ -32,6 +37,9 @@ function Header() {
             <Toolbar>
                 <Box
                     sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}
+                    component={Link}
+                    to="/"
+                    style={{ textDecoration: 'none' }} // Ensure there's no underline on the link
                 >
                     <img
                         src={logo}
@@ -62,7 +70,7 @@ function Header() {
                                     ? 'bold'
                                     : 'normal',
                         }}
-                        onClick={() => handleButtonClick('/about-us')}
+                        onClick={() => setActiveButton('/about-us')}
                     >
                         About Us
                     </Button>
@@ -80,7 +88,7 @@ function Header() {
                                     ? 'bold'
                                     : 'normal',
                         }}
-                        onClick={() => handleButtonClick('/services')}
+                        onClick={() => setActiveButton('/services')}
                     >
                         Services
                     </Button>
@@ -98,7 +106,7 @@ function Header() {
                                     ? 'bold'
                                     : 'normal',
                         }}
-                        onClick={() => handleButtonClick('/contact-us')}
+                        onClick={() => setActiveButton('/contact-us')}
                     >
                         Contact Us
                     </Button>
@@ -118,6 +126,8 @@ function Header() {
                         fontWeight: 'bold',
                         textTransform: 'none',
                     }}
+                    component={Link}
+                    to="/login"
                 >
                     LOGIN/SIGN UP
                 </Button>
