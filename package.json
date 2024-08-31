@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@date-io/date-fns": "^3.0.0",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.0.1",
+    "@mui/material": "^6.0.1",
+    "@mui/x-date-pickers": "^7.15.0",
+    "axios": "^1.7.6",
+    "date-fns": "^2.29.3",
+    "mui": "^0.0.1"
+  }
+}
